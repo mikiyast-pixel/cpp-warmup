@@ -119,10 +119,36 @@ int main() {
     //  Q1  ·  THE WEIGHING SESSION          (see README)
     //  Uses: morningWeights
     // =================================================================
-
+    size_t count = 0;
+    int valid_count = 0;
+    double Total_weight = 0;
+    double heaviest_weight = morningWeights[0];
+    int heaviest_weight_pos = 0;
+    int longest_run = 0;
+    vector<int> longest_run_history ={};
+    while (count < morningWeights.size()) {
+        Total_weight += morningWeights[count];
+        if ((morningWeights[count] > 0) && (morningWeights[count] <= 80)){
+            valid_count += 1;
+            longest_run += 1;
+        }
+        else{
+            longest_run_history.push_back(longest_run);
+            longest_run = 0;
+        }
+        if (morningWeights[count] > heaviest_weight){
+            heaviest_weight = morningWeights[count];
+            heaviest_weight_pos = count;
+        }
+        
+        count ++;
+    }
+    longest_run = *max_element(longest_run_history.begin(),longest_run_history.end());
     cout << "=== Q1 ===\n";
-
-
+    cout << "Total: " <<  Total_weight  << " kg"<<"\n";
+    cout << "valid: " << valid_count << " of 12" <<"\n";
+    cout << "Heaviest: " << heaviest_weight << " kg at position " << heaviest_weight_pos <<"\n";
+    cout << "Longest valid run : " << longest_run <<"\n";
 
 
 
@@ -133,8 +159,47 @@ int main() {
     //  Q2  ·  GRADE SUMMARY                 (see README)
     //  Uses: logbook
     // =================================================================
+    int adeliveries = 0;
+    int bdeliveries = 0;
+    int cdeliveries = 0; 
+    count = 0;
+    double Total_weighta = 0;
+    double Total_weightb = 0;
+    double Total_weightc = 0;
 
+    while(count < logbook.size()) {
+        if (logbook[count].grade == 'A'){
+            adeliveries += 1;
+            Total_weighta += logbook[count].kg;
+        }
+        if (logbook[count].grade == 'B'){
+            bdeliveries += 1;
+            Total_weightb += logbook[count].kg;
+        }
+        if (logbook[count].grade == 'C'){
+            cdeliveries += 1;
+            Total_weightc += logbook[count].kg;
+        
+        }
+        count++;
+    }
+    vector<double> averages = {Total_weighta/adeliveries, Total_weightb/bdeliveries, Total_weightc/cdeliveries};
+    string winner;
+    if (averages[0]==*max_element(averages.begin(),averages.end())){
+        winner = "A";
+    }
+    if (averages[1]==*max_element(averages.begin(),averages.end())){
+        winner = "B";
+    }
+    if (averages[2]==*max_element(averages.begin(),averages.end())){
+        winner = "C";
+    }
     cout << "=== Q2 ===\n";
+    cout << "Grade A:" << adeliveries << " deliveries, " << Total_weighta << " kg total, " << averages[0] << " kg average" << "\n";
+    cout << "Grade B:" << bdeliveries << " deliveries, " << Total_weightb << " kg total, " << averages[1] << " kg average" << "\n";
+    cout << "Grade C:" << cdeliveries << " deliveries, " << Total_weightc << " kg total, " << averages[2] << " kg average" << "\n";
+    cout << "Best average: grade " << winner << "\n";
+
 
 
 
