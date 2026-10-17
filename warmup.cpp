@@ -31,15 +31,16 @@ struct Delivery {
 
 /**
  * THE DATA
- * Do not change these. Every expected answer in the README comes from exactly this data.
+ * Do not change these. Every expected answer in the README comes fromint exactly this data.
  */
 
 // Q1 — one morning's weights, in the order they were weighed
 vector<double> morningWeights = {
     45.5, 80.0, 12.0, -3.0, 66.5, 20.0, 31.0, 95.0, 50.0, 18.5, 0.0, 72.0
 };
-int findFarmer(const vector<Delivery> &log, string name);
+int findFarmer(const vector<Delivery> log, string name);
 // Q2, Q3, Q4, Q7, Q8 — the day's logbook
+double payment(double kg, char grade, double total_cost);
 vector<Delivery> logbook = {
     {"Keza",    45.5, 'A'},
     {"Bonu",    80.0, 'B'},
@@ -80,7 +81,7 @@ vector<int> board = {0, 0, 0, 1, 0, 0, 4, 1, 0, 0, 2, 2, 0, 1, 5, 0, 0};
 // ---------------------------------------------------------------------
 //  A HELPER YOU MAY FIND USEFUL
 // ---------------------------------------------------------------------
-void printBoard(const vector<int> &b) {
+void printBoard(const vector<int> b) {
     for (int i = 1; i <= 16; i++) cout << b[i] << " ";
     cout << "\n";
 }
@@ -246,13 +247,22 @@ int main() {
     //  Q4  ·  PAYMENT RUN WITH A DAILY CAP  (see README)
     //  Uses: logbook, and the payment function you write below main
     // =================================================================
-
+    double total_cost = 0;
     cout << "=== Q4 ===\n";
+    count = 0;
+    while (count < logbook.size()){
+        if (total_cost < 100000){
+        cout << logbook[count].farmer << " " << logbook[count].kg << " kg" << " grade " << logbook[count].grade << " -> " << payment(logbook[count].kg, logbook[count].grade, total_cost) << "\n";
+        }
+        else{
+        cout << logbook[count].farmer << " " << logbook[count].kg << " kg" << " grade " << logbook[count].grade << " -> " << payment(logbook[count].kg, logbook[count].grade, total_cost) << "  (halved)"<< "\n";
 
+        }
+        total_cost += payment(logbook[count].kg, logbook[count].grade, total_cost);
+        count++;
 
-
-
-
+    }
+    cout << "Total paid: " << total_cost << "\n";
     cout << "\n";
 
 
@@ -326,7 +336,7 @@ int main() {
 //
 // }
 
-int findFarmer ( const vector<Delivery> &log, string name){
+int findFarmer ( const vector<Delivery> log, string name){
         int i = 0;
         while (i < log.size()) {
             if (log[i].farmer == name){
@@ -336,6 +346,28 @@ int findFarmer ( const vector<Delivery> &log, string name){
         }
         return -1;
 
+}
+
+double payment(double kg, char grade, double total_cost){    
+    double payment= 450 * kg;
+    if(total_cost < 100000){
+        if(grade == 'A'){
+            payment *= 1.1;
+        }
+        if(grade == 'C'){
+            payment *= 0.8;
+        }
+        return payment;
+    }
+    else{
+        if(grade == 'A'){
+            payment *= 1.1;
+        }
+        if(grade == 'C'){
+            payment *= 0.8;
+        }
+        return payment/2;
+    }
 }
 // Q4:  what one delivery earns, before any cap is applied.
 //      Grade A pays 10% above the rate, B pays the rate,
