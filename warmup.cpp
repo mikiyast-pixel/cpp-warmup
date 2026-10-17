@@ -10,7 +10,6 @@
 //  Work on ONE question at a time. Write it, run it, check the output
 //  against the README, commit it, move on.
 // =====================================================================
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -38,6 +37,8 @@ struct Delivery {
 vector<double> morningWeights = {
     45.5, 80.0, 12.0, -3.0, 66.5, 20.0, 31.0, 95.0, 50.0, 18.5, 0.0, 72.0
 };
+bool is_string_double( string kg);
+bool is_string_int(string id);
 int findFarmer(const vector<Delivery> log, string name);
 // Q2, Q3, Q4, Q7, Q8 — the day's logbook
 double payment(double kg, char grade, double total_cost);
@@ -82,8 +83,10 @@ vector<int> board = {0, 0, 0, 1, 0, 0, 4, 1, 0, 0, 2, 2, 0, 1, 5, 0, 0};
 //  A HELPER YOU MAY FIND USEFUL
 // ---------------------------------------------------------------------
 void printBoard(const vector<int> b) {
-    for (int i = 1; i <= 16; i++) cout << b[i] << " ";
+    for (int i = 1; i <= 16; i++){
+    cout << b[i] << " ";
     cout << "\n";
+    }
 }
 
 
@@ -113,8 +116,7 @@ int main() {
 
     cout << "=== Worked example ===\n";
     cout << "Grade A deliveries: " << gradeACount << "\n";
-    cout << "Heaviest: " << heaviest.farmer << " with "
-         << heaviest.kg << " kg\n\n";
+    cout << "Heaviest: " << heaviest.farmer << " with "<< heaviest.kg << " kg" << "\n";
 
 
     // =================================================================
@@ -236,7 +238,6 @@ int main() {
     }
     auto most_delivery  = max_element(frequency.begin(), frequency.end(),[](const auto& a, const auto& b){return a.second < b.second;});
     auto most_kg = max_element(Total_individual_weight.begin(),Total_individual_weight.end(),[](const auto& a, const auto& b){return a.second < b.second;});
-    cout << "this is keza"<<frequency["Keza"] << "\n";
     cout << "=== Q3 ===\n";
     cout << "findFarmer(Isanda) = " << findFarmer(logbook, "Isanda") << "\n";
     cout << "findFarmer(Mukamana) = " << findFarmer(logbook, "Mukamana") << "\n";
@@ -248,6 +249,8 @@ int main() {
     //  Uses: logbook, and the payment function you write below main
     // =================================================================
     double total_cost = 0;
+    cout << "\n";
+
     cout << "=== Q4 ===\n";
     count = 0;
     while (count < logbook.size()){
@@ -270,15 +273,55 @@ int main() {
     //  Q5  ·  THE VALIDATION REPORT         (see README)
     //  Uses: rawRecords
     // =================================================================
-
     cout << "=== Q5 ===\n";
+    count = 0;
+    int accepted = 0;
+    int rejected = 0;
+    while (count < rawRecords.size()){
+        if ((rawRecords[count].id[0] != 'F') or  (rawRecords[count].id.substr(1).size() != 3) or (rawRecords[count].id.size() != 4) or (is_string_int(rawRecords[count].id.substr(1)) == false) ){
+            cout << rawRecords[count].id << " REJECT - bad id" <<"\n";
+            rejected += 1;
+        }
+        else if ((rawRecords[count].kg.empty()) or (rawRecords[count].kg == "")){
+            cout << rawRecords[count].id <<" REJECT - weight missing" <<"\n";
+            rejected += 1;
 
+        }
+        else if (is_string_double(rawRecords[count].kg)){
+            if ((stod(rawRecords[count].kg) <= 0) or (stod(rawRecords[count].kg) > 80) or (rawRecords[count].kg.empty())){
+                cout << rawRecords[count].id << " REJECT - weight out of range" <<"\n";
+                rejected += 1;
 
+                }
+            else if((toupper(rawRecords[count].grade) != 'A') && (toupper(rawRecords[count].grade) != 'B') && (toupper(rawRecords[count].grade) != 'C')){
+                cout << rawRecords[count].id << " REJECT - unknown grade" << "\n";
+                rejected += 1;
 
+            }
+            else{
+                cout << rawRecords[count].id << " ACCEPT" << "\n";
+                accepted += 1;
 
+            }
+        }
+        else if (!is_string_double(rawRecords[count].kg)){
+            cout << rawRecords[count].id << " REJECT - weight not a number" << "\n";
+            rejected += 1;
 
+        }
+        else if((toupper(rawRecords[count].grade) != 'A') && (toupper(rawRecords[count].grade) != 'B') && (toupper(rawRecords[count].grade) != 'C')){
+            cout << rawRecords[count].id << " REJECT - unknown grade" << "\n";
+            rejected += 1;
+
+        }
+        else{
+            cout << rawRecords[count].id << " ACCEPT" << "\n";
+            accepted += 1;
+        }
+        count++;
+    }
+    cout<<accepted<< " accepted, " <<rejected << " rejected"<< "\n";
     cout << "\n";
-
     // =================================================================
     //  Q6  ·  IGISORO: A FULL TURN          (see README)
     //  Uses: board
@@ -368,6 +411,39 @@ double payment(double kg, char grade, double total_cost){
         }
         return payment/2;
     }
+}
+bool is_string_int(string id){
+    int count  = 0;
+    char check;
+    while (count < id.size()){
+        if (!id.empty()){
+            check = id[count];
+            if (isdigit(check) == false){
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+        
+        count ++ ;
+    }
+    return true;
+}
+bool is_string_double(string kg){
+    int count = 0;
+    int number_of_dots = 0;
+    while(count < kg.size()){
+        if(kg[count] == '.'){
+            number_of_dots += 1;
+        }
+        if ((!(kg[count] == '.') ) && (!isdigit(kg[count])) or (number_of_dots > 1)){
+            return false;
+        }
+        count++;
+
+    }
+    return true;
 }
 // Q4:  what one delivery earns, before any cap is applied.
 //      Grade A pays 10% above the rate, B pays the rate,
