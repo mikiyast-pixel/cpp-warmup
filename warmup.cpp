@@ -85,8 +85,9 @@ vector<int> board = {0, 0, 0, 1, 0, 0, 4, 1, 0, 0, 2, 2, 0, 1, 5, 0, 0};
 void printBoard(const vector<int> b) {
     for (int i = 1; i <= 16; i++){
     cout << b[i] << " ";
-    cout << "\n";
     }
+    cout << "\n";
+
 }
 
 
@@ -324,11 +325,47 @@ int main() {
     cout << "\n";
     // =================================================================
     //  Q6  ·  IGISORO: A FULL TURN          (see README)
-    //  Uses: board
+    //  Uses: board<
     // =================================================================
-
     cout << "=== Q6 ===\n";
+    count = 0;
+    int number_of_laps = 1;
+    int current_pit = 6;
+    int number_of_seeds_left = 0;
+    while(number_of_seeds_left >=0){
+        if(current_pit == 17){
+            current_pit = 1;
+        }
+        if(number_of_seeds_left == 0){
+            number_of_seeds_left = board[current_pit];
+            board[current_pit] = 0;
+        }
+        else if(number_of_seeds_left == 1){
+            if(board[current_pit] > 0){
+                number_of_seeds_left += board[current_pit];
+                board[current_pit] = 0;
+                number_of_laps ++;
+            }
+            else{
+                board[current_pit] += 1;
+                number_of_seeds_left -= 1;
+                cout << "Final board: ";
+                printBoard(board);
+                cout << "Landed in pit "<< current_pit << " after " << number_of_laps << " laps" << "\n";
+                break;
+            }
+        }
+        else{
+            board[current_pit] += 1;
+            
+            number_of_seeds_left -= 1;
 
+
+        }
+        
+        current_pit ++;
+
+    }
 
 
     
@@ -380,7 +417,7 @@ int main() {
 // }
 
 int findFarmer ( const vector<Delivery> log, string name){
-        int i = 0;
+        size_t i = 0;
         while (i < log.size()) {
             if (log[i].farmer == name){
                 return i;
@@ -390,6 +427,14 @@ int findFarmer ( const vector<Delivery> log, string name){
         return -1;
 
 }
+
+// Q4:  what one delivery earns, before any cap is applied.
+//      Grade A pays 10% above the rate, B pays the rate,
+//      anything else pays 20% below it. The rate is 450.
+//
+// double payment(double kg, char grade) {
+//
+// }
 
 double payment(double kg, char grade, double total_cost){    
     double payment= 450 * kg;
@@ -413,7 +458,7 @@ double payment(double kg, char grade, double total_cost){
     }
 }
 bool is_string_int(string id){
-    int count  = 0;
+    size_t count  = 0;
     char check;
     while (count < id.size()){
         if (!id.empty()){
@@ -431,13 +476,13 @@ bool is_string_int(string id){
     return true;
 }
 bool is_string_double(string kg){
-    int count = 0;
+    size_t count = 0;
     int number_of_dots = 0;
     while(count < kg.size()){
         if(kg[count] == '.'){
             number_of_dots += 1;
         }
-        if ((!(kg[count] == '.') ) && (!isdigit(kg[count])) or (number_of_dots > 1)){
+        if (((!(kg[count] == '.') ) && (!isdigit(kg[count]))) or (number_of_dots > 1)){
             return false;
         }
         count++;
@@ -445,10 +490,3 @@ bool is_string_double(string kg){
     }
     return true;
 }
-// Q4:  what one delivery earns, before any cap is applied.
-//      Grade A pays 10% above the rate, B pays the rate,
-//      anything else pays 20% below it. The rate is 450.
-//
-// double payment(double kg, char grade) {
-//
-// }
